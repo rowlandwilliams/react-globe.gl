@@ -1,16 +1,29 @@
-import * as React from 'react';
-import { Scene, Camera, WebGLRenderer, Object3D, Material } from 'three';
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-import { ConfigOptions, GlobeInstance as GlobeKapsuleInstance } from 'globe.gl';
+import * as React from "react";
+import { Scene, Camera, WebGLRenderer, Object3D, Material } from "three";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+import { ConfigOptions, GlobeInstance as GlobeKapsuleInstance } from "globe.gl";
 
 type Accessor<In, Out> = Out | string | ((obj: In) => Out);
 type ObjAccessor<T> = Accessor<object, T>;
 type HexBinAccessor<T> = Accessor<HexBin, T>;
 
+interface PointData {
+  esgTag: string;
+  theme: string;
+  impactTag: string;
+  headline: string;
+  countryName: string;
+  countryImgName: string;
+  lat: number;
+  lon: number;
+  elevation: number;
+  portfolioHoldings: string[];
+}
+
 interface HexBin {
-  points: object[],
-  sumWeight: number,
-  center: { lat: number, lng: number }
+  points: object[];
+  sumWeight: number;
+  center: { lat: number; lng: number };
 }
 
 interface GeoJsonGeometry {
@@ -20,7 +33,7 @@ interface GeoJsonGeometry {
 
 interface TypeFace {}
 
-type LabelOrientation = 'right' | 'top' | 'bottom';
+type LabelOrientation = "right" | "top" | "bottom";
 
 interface GeoCoords {
   lat: number;
@@ -56,8 +69,8 @@ export interface GlobeProps extends ConfigOptions {
   atmosphereAltitude?: number;
   globeMaterial?: Material;
   onGlobeReady?: () => void;
-  onGlobeClick?: (coords: { lat, lng }, event: MouseEvent) => void;
-  onGlobeRightClick?: (coords: { lat, lng }, event: MouseEvent) => void;
+  onGlobeClick?: (coords: { lat; lng }, event: MouseEvent) => void;
+  onGlobeRightClick?: (coords: { lat; lng }, event: MouseEvent) => void;
 
   // Points layer
   pointsData?: object[];
@@ -72,7 +85,7 @@ export interface GlobeProps extends ConfigOptions {
   pointLabel?: ObjAccessor<string>;
   onPointClick?: (point: object, event: MouseEvent) => void;
   onPointRightClick?: (point: object, event: MouseEvent) => void;
-  onPointHover?: (point: object | null, prevPoint: object | null) => void;
+  onPointHover?: (point: PointData | null, prevPoint: PointData | null) => void;
 
   // Arcs layer
   arcsData?: object[];
@@ -161,7 +174,10 @@ export interface GlobeProps extends ConfigOptions {
   hexPolygonLabel?: ObjAccessor<string>;
   onHexPolygonClick?: (polygon: object, event: MouseEvent) => void;
   onHexPolygonRightClick?: (polygon: object, event: MouseEvent) => void;
-  onHexPolygonHover?: (polygon: object | null, prevPolygon: object | null) => void;
+  onHexPolygonHover?: (
+    polygon: object | null,
+    prevPolygon: object | null
+  ) => void;
 
   // Tiles layer
   tilesData?: object[];
@@ -201,8 +217,13 @@ export interface GlobeProps extends ConfigOptions {
 
   // Custom layer
   customLayerData?: object[];
-  customThreeObject?: Object3D | string | ((d: object, globeRadius: number) => Object3D);
-  customThreeObjectUpdate?: string | ((obj: Object3D, objData: object, globeRadius: number) => void);
+  customThreeObject?:
+    | Object3D
+    | string
+    | ((d: object, globeRadius: number) => Object3D);
+  customThreeObjectUpdate?:
+    | string
+    | ((obj: Object3D, objData: object, globeRadius: number) => void);
   customLayerLabel?: ObjAccessor<string>;
   onCustomLayerClick?: (obj: object, event: MouseEvent) => void;
   onCustomLayerRightClick?: (obj: object, event: MouseEvent) => void;
@@ -218,7 +239,10 @@ export interface GlobeProps extends ConfigOptions {
 export interface GlobeMethods {
   // Render control
   pointOfView(): GeoCoords;
-  pointOfView(pov: { lat?: number, lng?: number, altitude?: number }, transitionMs?: number): GlobeKapsuleInstance;
+  pointOfView(
+    pov: { lat?: number; lng?: number; altitude?: number },
+    transitionMs?: number
+  ): GlobeKapsuleInstance;
   pauseAnimation(): GlobeKapsuleInstance;
   resumeAnimation(): GlobeKapsuleInstance;
   scene(): Scene;
@@ -231,10 +255,12 @@ export interface GlobeMethods {
   getCoords(lat: number, lng: number, altitude?: number): CartesianCoords;
   getScreenCoords(lat: number, lng: number, altitude?: number): ScreenCoords;
   toGeoCoords(coords: CartesianCoords): GeoCoords;
-  toGlobeCoords(x: number, y: number): { lat: number, lng: number} | null;
+  toGlobeCoords(x: number, y: number): { lat: number; lng: number } | null;
 }
 
-type FCwithRef<P = {}, R = {}> = React.FunctionComponent<P & { ref?: React.MutableRefObject<R | undefined> }>;
+type FCwithRef<P = {}, R = {}> = React.FunctionComponent<
+  P & { ref?: React.MutableRefObject<R | undefined> }
+>;
 
 declare const Globe: FCwithRef<GlobeProps, GlobeMethods>;
 
